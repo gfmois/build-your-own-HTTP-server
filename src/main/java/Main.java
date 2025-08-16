@@ -50,7 +50,7 @@ public class Main {
 
         logger.info("Request: {}", request);
 
-        if (request.getPath().equals("/index.html")) {
+        if (!request.getPath().equals("/index.html")) {
           output.write("HTTP/1.1 200 OK\r\n\r\n");
           output.flush();
         } else {

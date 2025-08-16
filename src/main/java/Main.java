@@ -59,6 +59,8 @@ public class Main {
           output.write("Content-Length: " + message.length() + "\r\n");
           output.write("\r\n");
           output.write(message);
+
+          logger.info("Response: {}", output.toString());
           output.flush();
         } else if (request.getPath().equals("/") || request.getPath().equals("")) {
           output.write("HTTP/1.1 200 OK\r\n\r\n");

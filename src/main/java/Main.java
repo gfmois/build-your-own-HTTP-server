@@ -62,6 +62,16 @@ public class Main {
 
           logger.info("Response: {}", output.toString());
           output.flush();
+        } else if (request.getPath().startsWith("/user-agent")) {
+          String userAgent = request.getHeaders().get("User-Agent");
+          output.write("HTTP/1.1 200 OK\r\n");
+          output.write("Content-Type: text/plain\r\n");
+          output.write("Content-Length: " + userAgent.length() + "\r\n");
+          output.write("\r\n"); // End of headers
+          output.write(userAgent);
+
+          logger.info("Response: {}", output.toString());
+          output.flush();
         } else if (request.getPath().equals("/") || request.getPath().equals("")) {
           output.write("HTTP/1.1 200 OK\r\n\r\n");
           output.flush();

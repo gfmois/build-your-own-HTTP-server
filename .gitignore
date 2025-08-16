@@ -1,3 +1,10 @@
-*.jar
 target/
+*.jar
+*.war
+*.ear
+*.class
+
+# Log files
+logs/
+*.log
 .idea/

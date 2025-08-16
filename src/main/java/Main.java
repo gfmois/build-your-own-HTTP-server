@@ -32,6 +32,7 @@ public class Main {
 
         while ((line = input.readLine()) != null && !line.isEmpty()) {
           String[] parts = line.split(" ");
+          logger.info("line: {}", line);
           if (i == 0) { // i = 0 -> request line
             try {
               request.setMethod(RequestMethod.valueOf(parts[0]));
@@ -50,7 +51,13 @@ public class Main {
 
         logger.info("Request: {}", request);
 
-        if (request.getPath().equals("/") || request.getPath().equals("")) {
+        if (request.getPath().startsWith("/echo")) {
+          String[] pathParts = request.getPath().split("/");
+          String message = pathParts[2];
+          output.write("HTTP/1.1 200 OK\r\n\r\n");
+          output.write(message);
+          output.flush();
+        } else if (request.getPath().equals("/") || request.getPath().equals("")) {
           output.write("HTTP/1.1 200 OK\r\n\r\n");
           output.flush();
         } else {

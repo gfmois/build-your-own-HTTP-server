@@ -53,11 +53,11 @@ public class Main {
 
         if (request.getPath().startsWith("/echo")) {
           String[] pathParts = request.getPath().split("/");
-          String message = pathParts[2];
-          output.write("HTTP/1.1 200 OK\r\n\r\n");
+          String message = pathParts[2]; // retrieve the second part of the path
+          output.write("HTTP/1.1 200 OK\r\n");
           output.write("Content-Type: text/plain\r\n");
           output.write("Content-Length: " + message.length() + "\r\n");
-          output.write("\r\n");
+          output.write("\r\n"); // End of headers
           output.write(message);
 
           logger.info("Response: {}", output.toString());

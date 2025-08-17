@@ -6,7 +6,7 @@
 
     <groupId>io.codecrafters</groupId>
     <artifactId>codecrafters-http-server</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -25,6 +25,13 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.3.2</version>
+        </dependency>
+
+        <!-- Snake YAML -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.4</version>
         </dependency>
     </dependencies>
 

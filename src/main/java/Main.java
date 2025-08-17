@@ -8,21 +8,30 @@ import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import domain.model.Configuration;
+import domain.model.Request;
 import enums.RequestMethod;
-import model.Request;
+import infrastructure.config.YamlConfigurationLoader;
+import infrastructure.container.Container;
+import infrastructure.server.Server;
 
 public class Main {
   private final static Logger logger = LogManager.getLogger(Main.class);
 
   public static void main(String[] args) {
+    logger.info("Reading configuration file...");
+    YamlConfigurationLoader yamlReader = new YamlConfigurationLoader();
+    Configuration serverConfiguration = yamlReader.load("configuration.yaml");
+    logger.info("Configuration loaded.");
+
     logger.info("Starting server");
 
-    try (ServerSocket serverSocket = new ServerSocket(4221)) {
+    try (Server serverSocket = (Server) Container.register(Server.class.getSimpleName(), Server.class, serverConfiguration)) {
       serverSocket.setReuseAddress(true);
-      
+
       try (Socket clientSocket = serverSocket.accept()) {
         logger.info("accepted new connection");
-        
+
         BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         OutputStreamWriter output = new OutputStreamWriter(clientSocket.getOutputStream());
 
@@ -81,7 +90,7 @@ public class Main {
         }
       } catch (IOException e) {
         logger.error("IOException: {}", e.getMessage());
-      }      
+      }
     } catch (IOException e) {
       logger.error("IOException: {}", e.getMessage());
     }

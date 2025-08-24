@@ -59,6 +59,7 @@ public class BaseController implements Controller {
     public List<Route> getRoutes() {
         return List.of(
                 new Route.Builder()
+                        .isSearchByStartsWith(true)
                         .setPath("/echo")
                         .setMethod("GET")
                         .setHandler("echoHandler")

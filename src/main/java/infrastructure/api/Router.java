@@ -44,6 +44,11 @@ public class Router {
 
     public Route resolve(Request request, OutputStreamWriter output) {
         for (Route route : routes) {
+            if (route.isSeachByStartsWith() && request.getPath().startsWith(route.getPath())
+                    && route.getMethod().equals(request.getMethod().name())) {
+                return route;
+            }
+
             if (route.getPath().equals(request.getPath()) && route.getMethod().equals(request.getMethod().name())) {
                 return route;
             }

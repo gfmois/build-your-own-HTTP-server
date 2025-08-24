@@ -3,6 +3,7 @@ package infrastructure.api;
 import java.util.Arrays;
 
 public class Route {
+    private boolean seachByStartsWith = false;
     private String path;
     private String method;
     private String handler;
@@ -13,9 +14,11 @@ public class Route {
     public Route() {
     }
 
-    public Route(String path, String method, String handler, String description, String[] middlewares,
+    public Route(boolean seachByStartsWith, String path, String method, String handler, String description,
+            String[] middlewares,
             String className) {
         this.path = path;
+        this.seachByStartsWith = seachByStartsWith;
         this.method = method;
         this.handler = handler;
         this.description = description;
@@ -24,12 +27,18 @@ public class Route {
     }
 
     public static class Builder {
+        private boolean seachByStartsWith = false;
         private String path;
         private String method;
         private String handler;
         private String description;
         private String[] middlewares;
         private String className;
+
+        public Builder isSearchByStartsWith(boolean seachByStartsWith) {
+            this.seachByStartsWith = seachByStartsWith;
+            return this;
+        }
 
         public Builder setPath(String path) {
             this.path = path;
@@ -62,7 +71,7 @@ public class Route {
         }
 
         public Route build() {
-            return new Route(path, method, handler, description, middlewares, className);
+            return new Route(seachByStartsWith, path, method, handler, description, middlewares, className);
         }
     }
 
@@ -114,10 +123,18 @@ public class Route {
         this.className = className;
     }
 
-    @Override
-    public String toString() {
-        return "Route [path=" + path + ", method=" + method + ", handler=" + handler + ", className=" + className
-                + ", description=" + description + ", middlewares=" + Arrays.toString(middlewares) + "]";
+    public boolean isSeachByStartsWith() {
+        return seachByStartsWith;
     }
 
+    public void setSeachByStartsWith(boolean seachByStartsWith) {
+        this.seachByStartsWith = seachByStartsWith;
+    }
+
+    @Override
+    public String toString() {
+        return "Route [seachByStartsWith=" + seachByStartsWith + ", path=" + path + ", method=" + method + ", handler="
+                + handler + ", className=" + className + ", description=" + description + ", middlewares="
+                + Arrays.toString(middlewares) + "]";
+    }
 }

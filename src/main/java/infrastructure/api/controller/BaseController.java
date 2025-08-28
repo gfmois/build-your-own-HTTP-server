@@ -21,6 +21,8 @@ public class BaseController implements Controller {
             output.write("HTTP/1.1 400 Bad Request\r\n");
             output.write("Content-Type: text/plain\r\n");
             output.write("Content-Length: 11\r\n");
+            output.write("Connection: close\r\n");
+
             output.write("\r\n"); // End of headers
             output.write("Bad Request");
             return;
@@ -30,6 +32,8 @@ public class BaseController implements Controller {
         output.write("HTTP/1.1 200 OK\r\n");
         output.write("Content-Type: text/plain\r\n");
         output.write("Content-Length: " + message.length() + "\r\n");
+        output.write("Connection: close\r\n");
+
         output.write("\r\n"); // End of headers
         output.write(message);
     }
@@ -41,6 +45,8 @@ public class BaseController implements Controller {
             output.write("HTTP/1.1 400 Bad Request\r\n");
             output.write("Content-Type: text/plain\r\n");
             output.write("Content-Length: 11\r\n");
+            output.write("Connection: close\r\n");
+
             output.write("\r\n"); // End of headers
             output.write("Bad Request");
             return;
@@ -48,6 +54,7 @@ public class BaseController implements Controller {
 
         output.write("HTTP/1.1 200 OK\r\n");
         output.write("Content-Type: text/plain\r\n");
+        output.write("Connection: close\r\n");
 
         String trimmedUserAgent = userAgent.trim();
         output.write("Content-Length: " + trimmedUserAgent.length() + "\r\n");

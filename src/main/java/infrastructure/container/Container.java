@@ -39,7 +39,7 @@ public class Container {
 
         T instance = createInstance(type, args);
         instances.put(name, instance);
-        logger.info("Registered instance of {} with name {}", type.getName(), name);
+        logger.debug("Registered instance of {} with name {}", type.getName(), name);
         return instance;
     }
 

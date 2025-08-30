@@ -20,9 +20,14 @@ import infrastructure.container.Container;
 
 public class Server extends ServerSocket {
     private final static Logger logger = LogManager.getLogger(Server.class);
+    private final String filesDirectory;
 
     public Server(Configuration configuration) throws IOException {
         super(configuration.getPort());
+        this.filesDirectory = configuration.getDirectory();
+        logger.info("Server started on port {} serving files from {}",
+                configuration.getPort(),
+                this.filesDirectory);
     }
 
     public void start(boolean reuseAddress) {

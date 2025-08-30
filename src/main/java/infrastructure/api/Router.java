@@ -38,7 +38,7 @@ public class Router {
                     .invoke(controllerInstance, request, output);
             output.flush();
         } catch (Exception e) {
-            logger.error("Error performing route action: {}", e.getMessage());
+            logger.error("Error performing route action: {} - {}", e.getMessage(), e.getCause());
         }
     }
 

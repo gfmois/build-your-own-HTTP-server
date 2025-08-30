@@ -1,94 +1,143 @@
 package infrastructure.api.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import domain.model.Configuration;
 import domain.model.Controller;
 import domain.model.Request;
+import domain.model.Response;
 import infrastructure.api.Route;
+import infrastructure.container.Container;
 
 public class BaseController implements Controller {
-    public void baseHandler(Request request, OutputStreamWriter output) throws IOException {
-        output.write("HTTP/1.1 200 OK\r\n\r\n");
-        output.flush();
-    }
+        private static final Logger logger = LogManager.getLogger(BaseController.class);
 
-    public void echoHandler(Request request, OutputStreamWriter output) throws IOException {
-        String[] pathParts = request.getPath().split("/");
+        public void baseHandler(Request request, OutputStreamWriter output) throws IOException {
+                Response response = new Response.Builder()
+                                .statusCode(200)
+                                .statusMessage("OK")
+                                .contentLength("2")
+                                .body("OK")
+                                .build();
 
-        if (pathParts.length < 2) {
-            output.write("HTTP/1.1 400 Bad Request\r\n");
-            output.write("Content-Type: text/plain\r\n");
-            output.write("Content-Length: 11\r\n");
-            output.write("Connection: close\r\n");
-
-            output.write("\r\n"); // End of headers
-            output.write("Bad Request");
-            return;
+                output.write(response.getRawResponse());
+                output.flush();
         }
 
-        String message = pathParts[pathParts.length - 1]; // get last part of the path
-        output.write("HTTP/1.1 200 OK\r\n");
-        output.write("Content-Type: text/plain\r\n");
-        output.write("Content-Length: " + message.length() + "\r\n");
-        output.write("Connection: close\r\n");
+        public void echoHandler(Request request, OutputStreamWriter output) throws IOException {
+                String[] pathParts = request.getPath().split("/");
+                Response.Builder responseBuilder = new Response.Builder();
 
-        output.write("\r\n"); // End of headers
-        output.write(message);
-    }
+                if (pathParts.length < 2) {
+                        responseBuilder
+                                        .statusCode(400)
+                                        .statusMessage("Bad Request")
+                                        .contentLength("11")
+                                        .contentType("text/plain")
+                                        .addHeader("Connection", "close")
+                                        .body("Bad Request");
+                        output.write(responseBuilder.build().getRawResponse());
+                        return;
+                }
 
-    public void userAgentHandler(Request request, OutputStreamWriter output) throws IOException {
-        String userAgent = request.getHeaders().get("User-Agent");
+                String message = pathParts[pathParts.length - 1]; // get last part of the path
+                responseBuilder
+                                .statusCode(200)
+                                .statusMessage("OK")
+                                .contentType("text/plain")
+                                .contentLength(String.valueOf(message.length()))
+                                .addHeader("Connection", "close")
+                                .body(message);
 
-        if (userAgent == null) {
-            output.write("HTTP/1.1 400 Bad Request\r\n");
-            output.write("Content-Type: text/plain\r\n");
-            output.write("Content-Length: 11\r\n");
-            output.write("Connection: close\r\n");
-
-            output.write("\r\n"); // End of headers
-            output.write("Bad Request");
-            return;
+                output.write(responseBuilder.build().getRawResponse());
         }
 
-        output.write("HTTP/1.1 200 OK\r\n");
-        output.write("Content-Type: text/plain\r\n");
-        output.write("Connection: close\r\n");
+        public void userAgentHandler(Request request, OutputStreamWriter output) throws IOException {
+                String userAgent = request.getHeaders().get("User-Agent");
+                Response.Builder responseBuilder = new Response.Builder();
 
-        String trimmedUserAgent = userAgent.trim();
-        output.write("Content-Length: " + trimmedUserAgent.length() + "\r\n");
-        output.write("\r\n");
-        output.write(trimmedUserAgent);
-    }
+                if (userAgent == null) {
+                        responseBuilder
+                                        .statusCode(400)
+                                        .statusMessage("Bad Request")
+                                        .contentLength("11")
+                                        .contentType("text/plain")
+                                        .addHeader("Connection", "close")
+                                        .body("Bad Request");
 
-    @Override
-    public List<Route> getRoutes() {
-        return List.of(
-                new Route.Builder()
-                        .isSearchByStartsWith(true)
-                        .setPath("/echo")
-                        .setMethod("GET")
-                        .setHandler("echoHandler")
-                        .setClassName(this.getClass().toString())
-                        .setDescription("Echoes back the request")
-                        .setMiddlewares(new String[] {})
-                        .build(),
-                new Route.Builder()
-                        .setPath("/user-agent")
-                        .setMethod("GET")
-                        .setHandler("userAgentHandler")
-                        .setClassName(this.getClass().toString())
-                        .setDescription("Returns the User-Agent header")
-                        .setMiddlewares(new String[] {})
-                        .build(),
-                new Route.Builder()
-                        .setPath("/")
-                        .setMethod("GET")
-                        .setHandler("baseHandler")
-                        .setClassName(this.getClass().toString())
-                        .setDescription("Base handler")
-                        .setMiddlewares(new String[] {})
-                        .build());
-    }
+                        output.write(responseBuilder.build().getRawResponse());
+                        return;
+                }
+
+                String trimmedUserAgent = userAgent.trim();
+                responseBuilder
+                                .statusCode(200)
+                                .statusMessage("OK")
+                                .contentType("text/plain")
+                                .contentLength(String.valueOf(trimmedUserAgent.length()))
+                                .addHeader("Connection", "close")
+                                .body(trimmedUserAgent);
+
+                output.write(responseBuilder.build().getRawResponse());
+        }
+
+        public void fileHandler(Request request, OutputStreamWriter output) throws IOException {
+                Response.Builder responseBuilder = new Response.Builder();
+                Configuration config = Container.getInstance(Configuration.class)
+                                .orElseThrow(() -> new RuntimeException("Configuration not found in container"));
+
+                logger.info("Config: {}", config);
+
+                responseBuilder
+                                .statusCode(200)
+                                .statusMessage("OK")
+                                .contentType("text/plain");
+
+                output.write(responseBuilder.build().getRawResponse());
+        }
+
+        @Override
+        public List<Route> getRoutes() {
+                String className = this.getClass().getName();
+                return List.of(
+                                new Route.Builder()
+                                                .setPath("/")
+                                                .setMethod("GET")
+                                                .setHandler("baseHandler")
+                                                .setClassName(className)
+                                                .setDescription("Base handler")
+                                                .setMiddlewares(new String[] {})
+                                                .build(),
+                                new Route.Builder()
+                                                .isSearchByStartsWith(true)
+                                                .setPath("/echo")
+                                                .setMethod("GET")
+                                                .setHandler("echoHandler")
+                                                .setClassName(className)
+                                                .setDescription("Echoes back the request")
+                                                .setMiddlewares(new String[] {})
+                                                .build(),
+                                new Route.Builder()
+                                                .setPath("/user-agent")
+                                                .setMethod("GET")
+                                                .setHandler("userAgentHandler")
+                                                .setClassName(className)
+                                                .setDescription("Returns the User-Agent header")
+                                                .setMiddlewares(new String[] {})
+                                                .build(),
+                                new Route.Builder()
+                                                .setPath("/files")
+                                                .setMethod("GET")
+                                                .setHandler("fileHandler")
+                                                .setClassName(className)
+                                                .setDescription("Returns the file requested as second part of the path")
+                                                .setMiddlewares(new String[] {})
+                                                .build());
+        }
 }

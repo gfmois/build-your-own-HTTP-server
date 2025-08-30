@@ -3,6 +3,7 @@ package infrastructure.container;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,16 +40,15 @@ public class Container {
 
         T instance = createInstance(type, args);
         instances.put(name, instance);
-        logger.debug("Registered instance of {} with name {}", type.getName(), name);
+        logger.info("Registered instance of {} with name {}", type.getName(), name);
         return instance;
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T getOrCreate(Class<T> type, Object... args) {
         return (T) instances.computeIfAbsent(
-            type.getName(),
-            k -> createInstance(type, args)
-        );
+                type.getName(),
+                k -> createInstance(type, args));
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +56,7 @@ public class Container {
         if (type == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
-        
+
         return instances.entrySet().stream()
                 .filter(entry -> type.isAssignableFrom(entry.getValue().getClass()))
                 .map(entry -> (T) entry.getValue())
@@ -70,7 +70,7 @@ public class Container {
         if (type == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
-        
+
         Object instance = instances.get(name);
         if (instance != null && type.isInstance(instance)) {
             return Optional.of(type.cast(instance));
@@ -81,8 +81,8 @@ public class Container {
     private static <T> T createInstance(Class<T> type, Object... args) {
         try {
             Class<?>[] argTypes = Arrays.stream(args)
-                .map(Object::getClass)
-                .toArray(Class<?>[]::new);
+                    .map(Object::getClass)
+                    .toArray(Class<?>[]::new);
 
             Constructor<T> constructor = type.getDeclaredConstructor(argTypes);
             return constructor.newInstance(args);
@@ -91,5 +91,14 @@ public class Container {
             logger.error(errorMsg, e);
             throw new ContainerException(errorMsg, e);
         }
+    }
+
+    public static void clear() {
+        instances.clear();
+        logger.debug("Cleared all registered instances in the container");
+    }
+
+    public static List<String> listRegisteredNames() {
+        return List.copyOf(instances.keySet());
     }
 }

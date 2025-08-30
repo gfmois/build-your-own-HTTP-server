@@ -18,6 +18,7 @@ public class YamlConfigurationLoader {
 
         return new Configuration.Builder()
                 .port((Integer) ((Map<String, Object>) obj.get("server")).get("port"))
+                .directory((String) ((Map<String, Object>) obj.get("server")).get("directory"))
                 .build();
     }
 }

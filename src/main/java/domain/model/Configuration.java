@@ -10,11 +10,14 @@ import org.apache.logging.log4j.Logger;
 
 public class Configuration {
     private static final Logger logger = LogManager.getLogger(Configuration.class);
-    private Integer port;
+    private Integer port = 8080;
     private String directory = "/tmp";
 
     private static final String COMMAND = "command";
     private static final String VALUE = "value";
+
+    public Configuration() {
+    }
 
     public Configuration(Integer port, String directory) {
         this.port = port;

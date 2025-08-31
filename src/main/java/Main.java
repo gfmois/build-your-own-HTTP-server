@@ -20,9 +20,10 @@ public class Main {
     Configuration serverConfiguration = yamlReader.load("configuration.yaml");
     logger.info("Configuration loaded.");
 
+    Configuration.checkForAppArgs(args, serverConfiguration);
     Container.register(Configuration.class.getSimpleName(), Configuration.class, serverConfiguration);
 
-    Configuration.checkForAppArgs(args, serverConfiguration);
+    logger.info("Configuration: {}", serverConfiguration);
 
     // Controllers
     List<Controller> controllers = List.of(

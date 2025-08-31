@@ -51,7 +51,6 @@ public class BaseController implements Controller {
                                 .statusMessage("OK")
                                 .contentType("text/plain")
                                 .contentLength(String.valueOf(message.length()))
-                                .addHeader("Connection", "close")
                                 .body(message);
 
                 return responseBuilder.build();
@@ -79,7 +78,6 @@ public class BaseController implements Controller {
                                 .statusMessage("OK")
                                 .contentType("text/plain")
                                 .contentLength(String.valueOf(trimmedUserAgent.length()))
-                                .addHeader("Connection", "close")
                                 .body(trimmedUserAgent);
 
                 return responseBuilder.build();

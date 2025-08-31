@@ -4,12 +4,14 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import domain.model.Controller;
+import domain.model.Header;
 import domain.model.Request;
 import domain.model.Response;
 import enums.HttpEncoding;
@@ -42,6 +44,8 @@ public class Router {
                     .invoke(controllerInstance, request, output);
 
             if (responseObj instanceof Response response) {
+                ensureConnectionHeader(response, output);
+
                 logger.info("Response: {}", response);
                 boolean hasBeenEncoded = encodeResponse(request, output, response);
                 output.write(response.getRawResponse().getBytes(StandardCharsets.UTF_8));
@@ -145,5 +149,22 @@ public class Router {
         }
 
         return false;
+    }
+
+    public void ensureConnectionHeader(Response response, OutputStream output) {
+        boolean isKeepAlive = Container.getServerInstance().isKeepAlive();
+        try {
+            Optional<Header> existing = response.getHeaders().stream()
+                    .filter(h -> h.getKey().equalsIgnoreCase("connection"))
+                    .findFirst();
+
+            if (existing.isPresent()) {
+                existing.get().setValue(isKeepAlive ? "keep-alive" : "close");
+            } else {
+                response.getHeaders().add(new Header("Connection", isKeepAlive ? "keep-alive" : "close"));
+            }
+        } catch (Exception e) {
+            logger.error("Error ensuring Connection header: {}", e.getMessage());
+        }
     }
 }

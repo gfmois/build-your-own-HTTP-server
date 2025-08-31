@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import infrastructure.container.exceptions.ContainerException;
+import infrastructure.server.Server;
 
 public class Container {
     private static final Logger logger = LogManager.getLogger(Container.class);
@@ -98,5 +99,10 @@ public class Container {
 
     public static List<String> listRegisteredNames() {
         return List.copyOf(instances.keySet());
+    }
+
+    public static Server getServerInstance() {
+        return Container.getInstance(Server.class)
+                .orElseThrow(() -> new ContainerException("Server instance is not registered in the container"));
     }
 }

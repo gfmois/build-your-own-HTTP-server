@@ -3,7 +3,7 @@ package infrastructure.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -62,7 +62,7 @@ public class Server extends ServerSocket {
     private void manageRequestProcessing(Socket clientSocket) throws IOException {
         // Handle client connection (read/write data)
         BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        OutputStreamWriter output = new OutputStreamWriter(clientSocket.getOutputStream());
+        OutputStream output = clientSocket.getOutputStream();
 
         String line;
         int i = 0;

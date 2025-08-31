@@ -2,7 +2,7 @@ package infrastructure.api.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import infrastructure.container.Container;
 public class BaseController implements Controller {
         private static final Logger logger = LogManager.getLogger(BaseController.class);
 
-        public void baseHandler(Request request, OutputStreamWriter output) throws IOException {
+        public Response baseHandler(Request request, OutputStream output) throws IOException {
                 Response response = new Response.Builder()
                                 .statusCode(200)
                                 .statusMessage("OK")
@@ -27,11 +27,10 @@ public class BaseController implements Controller {
                                 .body("OK")
                                 .build();
 
-                output.write(response.getRawResponse());
-                output.flush();
+                return response;
         }
 
-        public void echoHandler(Request request, OutputStreamWriter output) throws IOException {
+        public Response echoHandler(Request request, OutputStream output) throws IOException {
                 String[] pathParts = request.getPath().split("/");
                 Response.Builder responseBuilder = new Response.Builder();
 
@@ -43,8 +42,7 @@ public class BaseController implements Controller {
                                         .contentType("text/plain")
                                         .addHeader("Connection", "close")
                                         .body("Bad Request");
-                        output.write(responseBuilder.build().getRawResponse());
-                        return;
+                        return responseBuilder.build();
                 }
 
                 String message = pathParts[pathParts.length - 1]; // get last part of the path
@@ -56,10 +54,10 @@ public class BaseController implements Controller {
                                 .addHeader("Connection", "close")
                                 .body(message);
 
-                output.write(responseBuilder.build().getRawResponse());
+                return responseBuilder.build();
         }
 
-        public void userAgentHandler(Request request, OutputStreamWriter output) throws IOException {
+        public Response userAgentHandler(Request request, OutputStream output) throws IOException {
                 String userAgent = request.getHeaders().get("User-Agent");
                 Response.Builder responseBuilder = new Response.Builder();
 
@@ -72,8 +70,7 @@ public class BaseController implements Controller {
                                         .addHeader("Connection", "close")
                                         .body("Bad Request");
 
-                        output.write(responseBuilder.build().getRawResponse());
-                        return;
+                        return responseBuilder.build();
                 }
 
                 String trimmedUserAgent = userAgent.trim();
@@ -85,10 +82,10 @@ public class BaseController implements Controller {
                                 .addHeader("Connection", "close")
                                 .body(trimmedUserAgent);
 
-                output.write(responseBuilder.build().getRawResponse());
+                return responseBuilder.build();
         }
 
-        public void fileHandler(Request request, OutputStreamWriter output) throws IOException {
+        public Response fileHandler(Request request, OutputStream output) throws IOException {
                 Response.Builder responseBuilder = new Response.Builder();
                 Configuration config = Container.getInstance(Configuration.class)
                                 .orElseThrow(() -> new RuntimeException("Configuration not found in container"));
@@ -103,8 +100,7 @@ public class BaseController implements Controller {
                                         .contentType("text/plain")
                                         .body("Bad Request");
 
-                        output.write(responseBuilder.build().getRawResponse());
-                        return;
+                        return responseBuilder.build();
                 }
 
                 String fileName = pathParts[2];
@@ -119,8 +115,7 @@ public class BaseController implements Controller {
                                         .contentType("text/plain")
                                         .body("Not Found");
 
-                        output.write(responseBuilder.build().getRawResponse());
-                        return;
+                        return responseBuilder.build();
                 }
 
                 String body = Files.readString(file.toPath());
@@ -131,10 +126,10 @@ public class BaseController implements Controller {
                                 .contentLength(String.valueOf(body.length()))
                                 .body(body);
 
-                output.write(responseBuilder.build().getRawResponse());
+                return responseBuilder.build();
         }
 
-        public void saveFileHandler(Request request, OutputStreamWriter output) throws IOException {
+        public Response saveFileHandler(Request request, OutputStream output) throws IOException {
                 Response.Builder responseBuilder = new Response.Builder();
                 Configuration config = Container.getInstance(Configuration.class)
                                 .orElseThrow(() -> new RuntimeException("Configuration not found in container"));
@@ -149,8 +144,7 @@ public class BaseController implements Controller {
                                         .contentType("text/plain")
                                         .body("Bad Request");
 
-                        output.write(responseBuilder.build().getRawResponse());
-                        return;
+                        return responseBuilder.build();
                 }
 
                 String fileName = pathParts[2];
@@ -162,7 +156,7 @@ public class BaseController implements Controller {
                                 .statusCode(201)
                                 .statusMessage("Created");
 
-                output.write(responseBuilder.build().getRawResponse());
+                return responseBuilder.build();
         }
 
         @Override

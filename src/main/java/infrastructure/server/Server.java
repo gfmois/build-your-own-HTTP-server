@@ -80,13 +80,25 @@ public class Server extends ServerSocket {
                 } catch (Exception e) {
                     logger.error("Exception: {}", e.getMessage());
                 }
-            } else {
+            } else if (line.contains(":")) { // i > 0 -> headers
                 String[] headers = line.split(":");
                 request.getHeaders().put(headers[0], headers[1]);
             }
 
             i++;
         }
+
+        // Read body if present
+        StringBuilder bodyBuilder = new StringBuilder();
+        while (input.ready()) {
+            bodyBuilder.append((char) input.read());
+        }
+
+        if (bodyBuilder.length() > 0) {
+            request.setBody(bodyBuilder.toString());
+        }
+
+        logger.info("Request: {}", request);
 
         // Process the request
         Router router = Container.getOrCreate(Router.class);

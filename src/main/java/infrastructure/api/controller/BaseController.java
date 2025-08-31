@@ -134,6 +134,37 @@ public class BaseController implements Controller {
                 output.write(responseBuilder.build().getRawResponse());
         }
 
+        public void saveFileHandler(Request request, OutputStreamWriter output) throws IOException {
+                Response.Builder responseBuilder = new Response.Builder();
+                Configuration config = Container.getInstance(Configuration.class)
+                                .orElseThrow(() -> new RuntimeException("Configuration not found in container"));
+
+                String filesPathDirectory = config.getDirectory();
+                String[] pathParts = request.getPath().split("/");
+                if (pathParts.length < 3 || request.getBody() == null || request.getBody().isEmpty()) {
+                        responseBuilder
+                                        .statusCode(400)
+                                        .statusMessage("Bad Request")
+                                        .contentLength("11")
+                                        .contentType("text/plain")
+                                        .body("Bad Request");
+
+                        output.write(responseBuilder.build().getRawResponse());
+                        return;
+                }
+
+                String fileName = pathParts[2];
+                String body = request.getBody();
+                File file = new File(filesPathDirectory, fileName);
+                Files.writeString(file.toPath(), body);
+                logger.info("File saved: {}", file.getAbsolutePath());
+                responseBuilder
+                                .statusCode(201)
+                                .statusMessage("Created");
+
+                output.write(responseBuilder.build().getRawResponse());
+        }
+
         @Override
         public List<Route> getRoutes() {
                 String className = this.getClass().getName();
@@ -170,6 +201,15 @@ public class BaseController implements Controller {
                                                 .setHandler("fileHandler")
                                                 .setClassName(className)
                                                 .setDescription("Returns the file requested as second part of the path")
+                                                .setMiddlewares(new String[] {})
+                                                .build(),
+                                new Route.Builder()
+                                                .setPath("/files")
+                                                .isSearchByStartsWith(true)
+                                                .setMethod("POST")
+                                                .setHandler("saveFileHandler")
+                                                .setClassName(className)
+                                                .setDescription("Saves the file sent in the body")
                                                 .setMiddlewares(new String[] {})
                                                 .build());
         }

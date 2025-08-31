@@ -69,14 +69,16 @@ public class Response {
 
         // If headers does not contain Content-Length, add it
         boolean hasContentLength = headers.stream().anyMatch(h -> h.getKey().equalsIgnoreCase("Content-Length"));
+        boolean hasBody = body != null && !body.isEmpty();
         if (!hasContentLength) {
-            rawResponse.append("Content-Length: ").append(body.length()).append("\r\n");
+            rawResponse.append("Content-Length: ").append(hasBody ? body.length() : 0).append("\r\n");
         }
 
         rawResponse.append("\r\n");
         if (body != null && !body.isEmpty()) {
             rawResponse.append(body);
         }
+
         return rawResponse.toString();
     }
 

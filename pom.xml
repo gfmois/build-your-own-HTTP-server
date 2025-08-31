@@ -6,7 +6,7 @@
 
     <groupId>io.codecrafters</groupId>
     <artifactId>codecrafters-http-server</artifactId>
-    <version>1.0.28</version>
+    <version>1.0.29</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

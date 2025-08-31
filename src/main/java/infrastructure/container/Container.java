@@ -21,7 +21,6 @@ public class Container {
         // Private constructor to prevent instantiation
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T register(Class<T> type, Object... args) {
         if (type == null) {
             throw new IllegalArgumentException("Type cannot be null");
@@ -29,7 +28,6 @@ public class Container {
         return (T) register(type.getName(), type, args);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T register(String name, Class<T> type, Object... args) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");

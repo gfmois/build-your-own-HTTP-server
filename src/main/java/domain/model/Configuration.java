@@ -30,6 +30,11 @@ public class Configuration {
         this.port = port;
     }
 
+    public Configuration(Builder builder) {
+        this.port = builder.port;
+        this.directory = builder.directory;
+    }
+
     public Integer getPort() {
         return port;
     }
@@ -61,7 +66,7 @@ public class Configuration {
         }
 
         public Configuration build() {
-            return new Configuration(this.port);
+            return new Configuration(this);
         }
     }
 

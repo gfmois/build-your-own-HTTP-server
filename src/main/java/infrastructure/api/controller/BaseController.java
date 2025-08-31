@@ -3,6 +3,7 @@ package infrastructure.api.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -92,12 +93,42 @@ public class BaseController implements Controller {
                 Configuration config = Container.getInstance(Configuration.class)
                                 .orElseThrow(() -> new RuntimeException("Configuration not found in container"));
 
-                logger.info("Config: {}", config);
+                String filesPathDirectory = config.getDirectory();
+                String[] pathParts = request.getPath().split("/");
+                if (pathParts.length < 3) {
+                        responseBuilder
+                                        .statusCode(400)
+                                        .statusMessage("Bad Request")
+                                        .contentLength("11")
+                                        .contentType("text/plain")
+                                        .body("Bad Request");
 
+                        output.write(responseBuilder.build().getRawResponse());
+                        return;
+                }
+
+                String fileName = pathParts[2];
+                File file = new File(filesPathDirectory, fileName);
+                logger.info("Full path to file: {}", file.getAbsolutePath());
+                if (!file.exists() || !file.isFile()) {
+                        responseBuilder
+                                        .statusCode(404)
+                                        .statusMessage("Not Found")
+                                        .contentLength("9")
+                                        .contentType("text/plain")
+                                        .body("Not Found");
+
+                        output.write(responseBuilder.build().getRawResponse());
+                        return;
+                }
+
+                String body = Files.readString(file.toPath());
                 responseBuilder
                                 .statusCode(200)
                                 .statusMessage("OK")
-                                .contentType("text/plain");
+                                .contentType("application/octet-stream")
+                                .contentLength(String.valueOf(body.length()))
+                                .body(body);
 
                 output.write(responseBuilder.build().getRawResponse());
         }
@@ -133,6 +164,7 @@ public class BaseController implements Controller {
                                                 .build(),
                                 new Route.Builder()
                                                 .setPath("/files")
+                                                .isSearchByStartsWith(true)
                                                 .setMethod("GET")
                                                 .setHandler("fileHandler")
                                                 .setClassName(className)

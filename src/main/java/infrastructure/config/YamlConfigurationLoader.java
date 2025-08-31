@@ -19,6 +19,13 @@ public class YamlConfigurationLoader {
                 .getResourceAsStream(path);
 
         Map<String, Object> obj = yaml.load(inputStream);
+
+        if (!(obj.get("server") instanceof Map)) {
+            logger.error("Invalid server configuration format in YAML file. Using default configuration.");
+            return new Configuration();
+        }
+
+        @SuppressWarnings("unchecked")
         Map<String, Object> serverConfig = (Map<String, Object>) obj.get("server");
         Configuration.Builder builder = new Configuration.Builder();
 

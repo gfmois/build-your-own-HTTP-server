@@ -3,12 +3,7 @@ package domain.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Response {
-    private static final Logger logger = LogManager.getLogger(Response.class);
-
     private String version = "HTTP/1.1";
     private int statusCode = 200;
     private String statusMessage = "OK";

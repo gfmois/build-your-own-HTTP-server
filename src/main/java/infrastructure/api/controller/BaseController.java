@@ -108,9 +108,10 @@ public class BaseController implements Controller {
                 }
 
                 String fileName = pathParts[2];
+                logger.info("Full Path of Requested File: {}/{}", filesPathDirectory, fileName);
                 File file = new File(filesPathDirectory, fileName);
                 logger.info("Full path to file: {}", file.getAbsolutePath());
-                if (!file.exists() || !file.isFile()) {
+                if (!file.exists() || !file.isFile() || !file.canRead()) {
                         responseBuilder
                                         .statusCode(404)
                                         .statusMessage("Not Found")

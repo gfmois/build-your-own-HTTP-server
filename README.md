@@ -1,38 +1,34 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/0e06c936-ff2d-484a-aa57-83fcfccebec6)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Build Your Own HTTP Server
 
-This is a starting point for Java solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+This project is an implementation of an HTTP server from scratch using Java. It is designed to help developers and learners understand the inner workings of HTTP servers and how they handle requests and responses.
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+## Features
+- Basic HTTP request handling
+- Support for GET and POST methods
+- Simple routing mechanism
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+## Getting Started
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+### Prerequisites
+- Java Development Kit (JDK) 11 or higher
 
-# Passing the first stage
+### Running the Server
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gfmois/build-your-own-HTTP-server.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd build-your-own-HTTP-server
+   ```
+3. Compile and run the server:
+   ```bash
+   javac Main.java
+   java Main
+   ```
 
-The entry point for your HTTP server implementation is in
-`src/main/java/Main.java`. Study and uncomment the relevant code, and push your
-changes to pass the first stage:
+## Contributing
+Contributions are welcome! Feel free to open issues or submit pull requests to improve this project.
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
-
-Time to move on to the next stage!
-
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `mvn` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main/java/Main.java`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
